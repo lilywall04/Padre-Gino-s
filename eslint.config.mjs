@@ -19,7 +19,7 @@ export default [
   {
     files: ["**/*js", "**/*.jsx"],
     languageOptions: {
-      globals: { ...globals.broweser, ...globals.node },
+      globals: { ...globals.browser, ...globals.node },
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
