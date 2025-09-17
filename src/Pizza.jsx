@@ -1,3 +1,4 @@
+//simple reusable component for displaying pizza details
 const Pizza = (props) => {
   return (
     <div className="pizza">

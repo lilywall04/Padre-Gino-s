@@ -1,26 +1,30 @@
 import { useEffect, useState } from "react";
 import Pizza from "./Pizza";
 
+//Utility for formatting currency in USD
 const intl = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 
 export default function Order() {
-  //hooks
+  //State hooks for managing pizza types, selected type, size, and loading state
   const [pizzaTypes, setPizzaTypes] = useState([]);
   const [pizzaType, setPizzaType] = useState("pepperoni");
   const [pizzaSize, setPizzaSize] = useState("M");
   const [loading, setLoading] = useState(true);
 
+  //Variables to store currently selected pizza and calculatede price
   let price, selectedPizza;
 
   if (!loading) {
+    //find the pizza object from teh API response that matches the current selection
     selectedPizza = pizzaTypes.find((pizza) => pizzaType === pizza.id);
+    //Format the price of the selected pizza size
     price = intl.format(selectedPizza.sizes[pizzaSize]);
   }
 
-  //effect funtion
+  //Fetch list of pizzas from the backend API
   async function fetchPizzaTypes() {
     const pizzaRes = await fetch("/api/pizzas");
     const pizzaJson = await pizzaRes.json();
@@ -28,7 +32,7 @@ export default function Order() {
     setLoading(false);
   }
 
-  //effect
+  //useEffect runs once on componenet mount to load pizza types
   useEffect(() => {
     fetchPizzaTypes();
   }, []);
@@ -37,6 +41,7 @@ export default function Order() {
     <div className="order">
       <h2>Create Order</h2>
       <form>
+        {/* Dropdown for pizza type */}
         <div>
           <div>
             <label htmlFor="pizza-type">Pizza Type</label>
@@ -45,11 +50,15 @@ export default function Order() {
               name="pizza-type"
               value={pizzaType}
             >
+              {/* Render options dynamically from the pizzaTypes array */}
               {pizzaTypes.map((pizza) => (
-                <option key={pizza.id} value={pizza.id}>{pizza.name}</option>
+                <option key={pizza.id} value={pizza.id}>
+                  {pizza.name}
+                </option>
               ))}
             </select>
           </div>
+          {/* Radio buttons for pizza size */}
           <div>
             <label htmlFor="pizza-size">Pizza Size</label>
             <div>
@@ -89,19 +98,21 @@ export default function Order() {
             </div>
           </div>
           <button type="submit">Add to Cart</button>
+        </div>
+        {/* Show loading text or selected pizza */}
+        {loading ? (
+          <h1>loading pizza lol</h1>
+        ) : (
           <div className="order-pizza">
-            {loading ? (
-              <h1>loading pizza lol</h1>
-            ) : (
-              <Pizza
-                name={selectedPizza.name}
-                description={selectedPizza.description}
-                image={selectedPizza.image}
-              />
-            )}
+            {/* Custom Pizza component for displaying pizza info */}
+            <Pizza
+              name={selectedPizza.name}
+              description={selectedPizza.description}
+              image={selectedPizza.image}
+            />
             <p>{price}</p>
           </div>
-        </div>
+        )}
       </form>
     </div>
   );
