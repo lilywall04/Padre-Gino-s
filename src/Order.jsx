@@ -16,6 +16,22 @@ export default function Order() {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  //sends cart data to backend via a POST request
+  async function checkout(){
+    setLoading(true);
+
+    await fetch("/api/order", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ cart }),
+    });
+
+    setCart([]); //clears cart
+    setLoading(false); //ends loading state so UI updates
+  }
+
   //Variables to store currently selected pizza and calculatede price
   let price, selectedPizza;
 
@@ -127,7 +143,7 @@ export default function Order() {
         </form>
       </div>
       {/* While loading, show a loading message. Once done, show the carts componnet with its data */}
-      {loading ? <h2>Loading...</h2> : <Cart cart={cart} />}
+      {loading ? <h2>Loading...</h2> : <Cart checkout={checkout} cart={cart} />}
     </div>
   );
 }
